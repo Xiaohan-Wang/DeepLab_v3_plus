@@ -10,6 +10,13 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 from torch.utils.tensorboard import SummaryWriter
+import warnings
+warnings.filterwarnings('ignore')
+
+class Config:
+    config_id = 6
+    test_prop = True
+    temp_dir = '/usr/xtmp/xw176/temp'
 
 
 class Net(nn.Module):
@@ -63,10 +70,10 @@ class Trainer(BaseTrainer):
             self.model.cuda()
 
         self.optimizer = optim.SGD(self.model.parameters(), lr=args.lr, momentum=args.momentum)
-        self.model_temp_dir = tempfile.mkdtemp(dir=self.config['temp_dir'])
+        self.model_temp_dir = tempfile.mkdtemp(dir=self.config.temp_dir)
         print("Writing models locally to %s\n" % self.model_temp_dir)
         # Create a SummaryWriter to write TensorBoard events locally
-        self.tb_temp_dir = tempfile.mkdtemp(dir=self.config['temp_dir'])
+        self.tb_temp_dir = tempfile.mkdtemp(dir=self.config.temp_dir)
         self.writer = SummaryWriter(self.tb_temp_dir)
         print("Writing TensorBoard events locally to %s\n" % self.tb_temp_dir)
 
@@ -129,11 +136,13 @@ class Trainer(BaseTrainer):
         -val_epoch
         """
         with mlflow.start_run():
+            print("tracking URI: ", mlflow.tracking.get_tracking_uri())
             # Log our parameters into mlflow
             for key, value in vars(self.args).items():
                 mlflow.log_param(key, value)
-            for key, value in self.config.items():
-                mlflow.log_param(key, value)
+            for name in dir(self.config):
+                if not name.startswith('__'):
+                    mlflow.log_param(name, getattr(self.config, name))
 
 
             # Perform the training
@@ -174,10 +183,7 @@ if __name__ == '__main__':
                         help='how many batches to wait before logging training status')
     args = parser.parse_args()
 
-    config = {
-        'config_id': 1,
-        'temp_dir': '/usr/xtmp/xw176/temp'
-    }
+    config = Config()
 
     trainer = Trainer(config, args)
     trainer.train()

@@ -9,6 +9,7 @@ class BaseTrainer:
         self.train_loader = None
         self.val_loader = None
         self.optimizer = None
+        # have to print the dirs
         self.tb_temp_dir = None
         self.model_temp_dir = None
 
@@ -33,6 +34,7 @@ class BaseTrainer:
     def train(self):
         """
         implement the logic of train:
+        -print("tracking URI: ", mlflow.tracking.get_tracking_uri())
         -log experiment parameters
         -loop
             -train_epoch and
