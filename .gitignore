@@ -1,2 +1,6 @@
 *.xmind
 *.png
+*.out
+*/mlruns
+*/__pycache__
+data/

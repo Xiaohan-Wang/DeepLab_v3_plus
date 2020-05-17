@@ -1,4 +1,4 @@
-from base.base_trainer import BaseTrainer
+from base_trainer import BaseTrainer
 import argparse
 import os
 import mlflow
@@ -64,6 +64,7 @@ class Trainer(BaseTrainer):
 
         self.optimizer = optim.SGD(self.model.parameters(), lr=args.lr, momentum=args.momentum)
         self.model_temp_dir = tempfile.mkdtemp(dir=self.config['temp_dir'])
+        print("Writing models locally to %s\n" % self.model_temp_dir)
         # Create a SummaryWriter to write TensorBoard events locally
         self.tb_temp_dir = tempfile.mkdtemp(dir=self.config['temp_dir'])
         self.writer = SummaryWriter(self.tb_temp_dir)
@@ -140,7 +141,7 @@ class Trainer(BaseTrainer):
                 self.train_epoch(epoch)
                 self.val_epoch(epoch)
                 if epoch % 2 == 0 and epoch!=0:
-                    torch.save(self.model.state_dict(), self.model_temp_dir)
+                    torch.save(self.model.state_dict(), self.model_temp_dir+'/epoch_'+str(epoch)+'.pth')
 
             print("Uploading models as a run artifact...")
             mlflow.log_artifacts(self.model_temp_dir, artifact_path="models")
