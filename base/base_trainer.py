@@ -4,13 +4,13 @@ class BaseTrainer:
     def __init__(self, config, args):
         self.config = config
         self.args = args
-        self.writer = None
         self.model = None
         self.train_loader = None
         self.val_loader = None
         self.optimizer = None
         # have to print the dirs
         self.tb_temp_dir = None
+        self.writer = None
         self.model_temp_dir = None
 
     def train_epoch(self, epoch):
