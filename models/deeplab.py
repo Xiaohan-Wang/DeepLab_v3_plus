@@ -8,7 +8,7 @@ from aspp import build_ASPP
 from decoder import build_decoder
 
 
-class Deeplab(nn.Module):
+class DeepLab(nn.Module):
     def __init__(self, backbone='resnet', output_stride=16, num_classes=21):
         super().__init__()
         self.backbone = build_backbone(backbone, output_stride)
