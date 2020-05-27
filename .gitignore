@@ -1,7 +1,14 @@
-*.xmind
+# 后斜杠代表文件夹
+.idea/
+__pycache__/
+mlruns/
+
+# 前斜杠代表当前目录下
+/test_output/
+/data/
+
+# 忽略当前目录和子目录下的全部该类后缀名文件
+*.ipynb
 *.png
 *.out
-*/mlruns
-*/__pycache__
-data/
-*.ipynb
+*.xmind
