@@ -1,6 +1,6 @@
 import torch.utils.data as data
 import os
-from dataloaders.utils import recursive_glob
+from datasets.utils import recursive_glob
 import cv2
 import albumentations as albu
 import albumentations.pytorch as albupt
