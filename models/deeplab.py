@@ -39,11 +39,15 @@ class DeepLab(nn.Module):
         params = [self.aspp.parameters(), self.decoder.parameters()]
         return itertools.chain(*params)
 
+def build_Deeplab(backbone, output_stride, num_classes):
+    return DeepLab(backbone, output_stride, num_classes)
+
+
 if __name__ == '__main__':
     import torch
     import torchviz
     x = torch.randn(4, 3, 256, 256)
-    model = Deeplab(backbone='resnet', output_stride=8, num_classes=14)
+    model = build_Deeplab(backbone='resnet', output_stride=8, num_classes=14)
     y = model(x)
     print(y.shape)
     torchviz.make_dot(y).render('Deeplab', view=False)
