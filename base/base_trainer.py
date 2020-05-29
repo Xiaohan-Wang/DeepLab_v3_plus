@@ -4,10 +4,16 @@ class BaseTrainer:
     def __init__(self, config, args):
         self.config = config
         self.args = args
+
+        # train / val
         self.model = None
         self.train_loader = None
         self.val_loader = None
+        self.criterion = None
+        self.lr_scheduler = None
         self.optimizer = None
+        self.evaluator = None
+
         # have to print the dirs
         self.tb_temp_dir = None
         self.writer = None
