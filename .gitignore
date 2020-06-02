@@ -6,6 +6,7 @@ mlruns/
 # 前斜杠代表当前目录下
 /test_output/
 /data/
+/work_file/
 
 # 忽略当前目录和子目录下的全部该类后缀名文件
 *.ipynb

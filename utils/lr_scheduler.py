@@ -100,11 +100,19 @@ def _get_warmup_factor_at_iter(method, iter, warmup_iters, warmup_factor):
         raise ValueError("Unknown warmup method: {}".format(method))
 
 
+def build_lr_scheduler(mode='WarmupCosine'):
+    if mode == 'WarmupCosine':
+        return WarmupCosineLR
+    elif mode == 'WarmupMultiStep':
+        return WarmupMultiStepLR
+    else:
+        raise NotImplementedError
+
 
 if __name__ == '__main__':
     import torch.optim as optim
     import matplotlib.pyplot as plt
-    from Config import Config
+    from config import Config
     import torch.nn as nn
 
     config = Config()
