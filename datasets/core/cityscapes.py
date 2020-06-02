@@ -26,7 +26,7 @@ class CityScapes(data.Dataset):
         img_name = '_'.join(img_path.split('_')[:-1]).split(os.sep)[-1]
         label_path = os.path.join(self.label_base, img_path.split(os.sep)[-2], img_name + '_gtFine_labelIds.png')
         label = cv2.imread(label_path, cv2.IMREAD_GRAYSCALE)
-        label = self.encode_segmap(np.array(label))
+        label = self.encode_segmap(label)
 
         if self.split == 'train':
             return self.transform_train(img, label)
@@ -48,10 +48,10 @@ class CityScapes(data.Dataset):
 
     def transform_train(self, img, label):
         composed_transform = albu.Compose([
-            albu.HorizontalFlip(p=0.5),
-            albu.RandomScale(scale_limit=0.2, p=1),
-            albu.RandomCrop(512, 512, p=1),
-            albu.GaussianBlur(p=0.5),
+            # albu.HorizontalFlip(p=0.5),
+            # albu.RandomScale(scale_limit=0.2, p=1),
+            # albu.RandomCrop(512, 512, p=1),
+            # albu.GaussianBlur(p=0.5),
             albu.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             albupt.ToTensorV2()
         ])
@@ -61,7 +61,7 @@ class CityScapes(data.Dataset):
     def transform_val(self, img, mask):
         # no random operation so that validation set always keeps the same
         composed_transform = albu.Compose([
-            albu.Resize(512, 1024),
+            # albu.Resize(512, 1024),
             albu.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             albupt.ToTensorV2()
         ])
@@ -77,7 +77,6 @@ class CityScapes(data.Dataset):
         return transformed['image'], transformed['mask']
 
 if __name__ == '__main__':
-    import numpy as np
     from torch.utils.data import DataLoader
     import matplotlib.pyplot as plt
 

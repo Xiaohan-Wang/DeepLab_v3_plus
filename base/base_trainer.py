@@ -1,4 +1,6 @@
 import mlflow
+import os
+from torch.utils.tensorboard import SummaryWriter
 
 class BaseTrainer:
     def __init__(self, config, args):
@@ -14,10 +16,7 @@ class BaseTrainer:
         self.optimizer = None
         self.evaluator = None
 
-        # have to print the dirs
-        self.tb_temp_dir = None
         self.writer = None
-        self.model_temp_dir = None
 
     def train_epoch(self, epoch):
         """
@@ -54,3 +53,10 @@ class BaseTrainer:
         """Log a scalar value to both MLflow and TensorBoard"""
         self.writer.add_scalar(name, value, step)
         mlflow.log_metric(name, value, step)
+
+    def prepare_artifacts_dir(self, artifacts_dir):
+        if artifacts_dir.startswith("file://"):
+            artifacts_dir = artifacts_dir[7:]
+        os.mkdir(os.path.join(artifacts_dir, "models"))
+        os.mkdir(os.path.join(artifacts_dir, 'events'))
+        self.writer = SummaryWriter(os.path.join(artifacts_dir, 'events'))

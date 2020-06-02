@@ -14,9 +14,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Config:
+    exp_name = 'test_name'
     config_id = 6
     test_prop = True
-    temp_dir = '/usr/xtmp/xw176/temp'
 
 
 class Net(nn.Module):
@@ -70,12 +70,6 @@ class Trainer(BaseTrainer):
             self.model.cuda()
 
         self.optimizer = optim.SGD(self.model.parameters(), lr=args.lr, momentum=args.momentum)
-        self.model_temp_dir = tempfile.mkdtemp(dir=self.config.temp_dir)
-        print("Writing models locally to %s\n" % self.model_temp_dir)
-        # Create a SummaryWriter to write TensorBoard events locally
-        self.tb_temp_dir = tempfile.mkdtemp(dir=self.config.temp_dir)
-        self.writer = SummaryWriter(self.tb_temp_dir)
-        print("Writing TensorBoard events locally to %s\n" % self.tb_temp_dir)
 
     def train_epoch(self, epoch):
         """
@@ -135,8 +129,16 @@ class Trainer(BaseTrainer):
         -train_epoch
         -val_epoch
         """
+        client = mlflow.tracking.MlflowClient()
+        mlflow.set_experiment(self.config.exp_name)
+        exp_id = client.get_experiment_by_name(self.config.exp_name).experiment_id
+        print("exp_id:", exp_id)
         with mlflow.start_run():
-            print("tracking URI: ", mlflow.tracking.get_tracking_uri())
+            # print("tracking URI: ", mlflow.tracking.get_tracking_uri())
+            print("artifact location: ", mlflow.get_artifact_uri())
+            artifacts_dir = mlflow.get_artifact_uri()
+            self.prepare_artifacts_dir(artifacts_dir)
+
             # Log our parameters into mlflow
             for key, value in vars(self.args).items():
                 mlflow.log_param(key, value)
@@ -149,17 +151,17 @@ class Trainer(BaseTrainer):
             for epoch in range(1, args.epochs + 1):
                 self.train_epoch(epoch)
                 self.val_epoch(epoch)
-                if epoch % 2 == 0 and epoch!=0:
-                    torch.save(self.model.state_dict(), self.model_temp_dir+'/epoch_'+str(epoch)+'.pth')
+                if epoch % 2 == 1:
+                    torch.save(self.model.state_dict(), artifacts_dir +'models/epoch_'+str(epoch)+'.pth')
 
-            print("Uploading models as a run artifact...")
-            mlflow.log_artifacts(self.model_temp_dir, artifact_path="models")
-
-            # Upload the TensorBoard event logs as a run artifact
-            print("Uploading TensorBoard events as a run artifact...")
-            mlflow.log_artifacts(self.tb_temp_dir, artifact_path="events")
-            print("\nLaunch TensorBoard with:\n\ntensorboard --logdir=%s" %
-                  os.path.join(mlflow.get_artifact_uri(), "events"))
+            # print("Uploading models as a run artifact...")
+            # mlflow.log_artifacts(self.model_temp_dir, artifact_path="models")
+            #
+            # # Upload the TensorBoard event logs as a run artifact
+            # print("Uploading TensorBoard events as a run artifact...")
+            # mlflow.log_artifacts(self.tb_temp_dir, artifact_path="events")
+            # print("\nLaunch TensorBoard with:\n\ntensorboard --logdir=%s" %
+            #       os.path.join(mlflow.get_artifact_uri(), "events"))
 
 
 if __name__ == '__main__':
@@ -169,7 +171,7 @@ if __name__ == '__main__':
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+    parser.add_argument('--epochs', type=int, default=2, metavar='N',
                         help='number of epochs to train (default: 10)')
     parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                         help='learning rate (default: 0.01)')
