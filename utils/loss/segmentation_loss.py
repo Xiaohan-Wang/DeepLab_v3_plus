@@ -7,7 +7,7 @@ class CrossEntropyLoss(nn.Module):
         self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='mean')
 
     def forward(self, input, target):
-        loss = self.criterion(input, target)
+        loss = self.criterion(input, target.long())
         return loss
 
 
@@ -17,7 +17,7 @@ class WeightedCrossEntropyLoss(nn.Module):
         self.criterion = nn.CrossEntropyLoss(weight=weight, ignore_index=ignore_index, reduction='mean')
 
     def forward(self, input, target):
-        loss = self.criterion(input, target)
+        loss = self.criterion(input, target.long())
         return loss
 
 
@@ -27,7 +27,7 @@ class FocalLoss(nn.Module):
         self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='none')
 
     def forward(self, input, target):
-        minus_log_pt = self.criterion(input, target)
+        minus_log_pt = self.criterion(input, target.long())
         pt = torch.exp(-minus_log_pt)
         scale = (1 - pt) ** 2
         loss = scale * minus_log_pt
@@ -42,7 +42,7 @@ class WeightedFocalLoss(nn.Module):
         self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='none')
 
     def forward(self, input, target):
-        minus_log_pt = self.criterion(input, target)
+        minus_log_pt = self.criterion(input, target.long())
         pt = torch.exp(-minus_log_pt)
         weightt = self.weight[target]
         scale = (1 - pt) ** 2 * weightt

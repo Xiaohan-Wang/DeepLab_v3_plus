@@ -14,7 +14,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Config:
-    exp_name = 'test_name'
+    exp_name = 'final test'
+    run_name = 'no tb'
     config_id = 6
     test_prop = True
 
@@ -132,12 +133,9 @@ class Trainer(BaseTrainer):
         client = mlflow.tracking.MlflowClient()
         mlflow.set_experiment(self.config.exp_name)
         exp_id = client.get_experiment_by_name(self.config.exp_name).experiment_id
-        print("exp_id:", exp_id)
-        with mlflow.start_run():
-            # print("tracking URI: ", mlflow.tracking.get_tracking_uri())
-            print("artifact location: ", mlflow.get_artifact_uri())
-            artifacts_dir = mlflow.get_artifact_uri()
-            self.prepare_artifacts_dir(artifacts_dir)
+        print("exp_name:{}, exp_id:{}".format(self.config.exp_name, exp_id))
+        with mlflow.start_run(run_name=self.config.run_name):
+            artifacts_dir = self.prepare_artifacts_dir(mlflow.get_artifact_uri())
 
             # Log our parameters into mlflow
             for key, value in vars(self.args).items():
@@ -151,17 +149,8 @@ class Trainer(BaseTrainer):
             for epoch in range(1, args.epochs + 1):
                 self.train_epoch(epoch)
                 self.val_epoch(epoch)
-                if epoch % 2 == 1:
-                    torch.save(self.model.state_dict(), artifacts_dir +'models/epoch_'+str(epoch)+'.pth')
-
-            # print("Uploading models as a run artifact...")
-            # mlflow.log_artifacts(self.model_temp_dir, artifact_path="models")
-            #
-            # # Upload the TensorBoard event logs as a run artifact
-            # print("Uploading TensorBoard events as a run artifact...")
-            # mlflow.log_artifacts(self.tb_temp_dir, artifact_path="events")
-            # print("\nLaunch TensorBoard with:\n\ntensorboard --logdir=%s" %
-            #       os.path.join(mlflow.get_artifact_uri(), "events"))
+                if epoch % 2 == 0:
+                    torch.save(self.model.state_dict(), artifacts_dir +'/models/epoch_'+str(epoch)+'.pth')
 
 
 if __name__ == '__main__':
@@ -171,7 +160,7 @@ if __name__ == '__main__':
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=2, metavar='N',
+    parser.add_argument('--epochs', type=int, default=10, metavar='N',
                         help='number of epochs to train (default: 10)')
     parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                         help='learning rate (default: 0.01)')

@@ -3,9 +3,9 @@ import torch.nn.init as init
 import torch.nn.functional as F
 import itertools
 
-from backbone import build_backbone
-from aspp import build_ASPP
-from decoder import build_decoder
+from models.backbone import build_backbone
+from models.aspp import build_ASPP
+from models.decoder import build_decoder
 
 
 class DeepLab(nn.Module):

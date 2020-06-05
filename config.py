@@ -1,24 +1,35 @@
 class Config:
-    # output folder
-    code_test_dir = '/home/home1/xw176/work/frameworks/DeepLab_v3+/test_output' # delete after testing the code
-    working_file_dir = '/home/home1/xw176/work/frameworks/DeepLab_v3+/work_file' # store working file for each dataset
+    # mlflow
+    exp_name = 'workflow_test'
+    run_name = 'val_epoch()'
 
-    # model
-    backbone = 'resnet'
-    output_stride = 16
+    # output folder
+    code_test_dir = '/home/home1/xw176/work/frameworks/DeepLab_v3+/test_output'  # delete after testing the code
+    working_file_dir = '/home/home1/xw176/work/frameworks/DeepLab_v3+/work_file'  # store working file for each dataset
 
     # dataset
     dataset = 'cityscapes'
     dataset_root = '/usr/xtmp/vision/datasets/Cityscapes'
     num_classes = 19
+    ignore_index = 255
+
+    # model
+    backbone = 'resnet'
+    output_stride = 16
 
     # train
+    train_batch_size = 2
+    train_num_workers = 0
+    loss = 'Focal'
     lr_scheduler = 'WarmupCosine'
-    loss = 'focal'
-    batch_size = 32
+    lr = 3e-4
+    max_epoch = 1000
+    warmup_epoch = 5
 
-config = Config()
+    # val
+    val_batch_size = 4
+    val_num_workers = 0
 
-
-
-
+    # other
+    cuda = False
+    resume = None

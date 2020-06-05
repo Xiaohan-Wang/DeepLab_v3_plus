@@ -48,10 +48,10 @@ class CityScapes(data.Dataset):
 
     def transform_train(self, img, label):
         composed_transform = albu.Compose([
-            # albu.HorizontalFlip(p=0.5),
-            # albu.RandomScale(scale_limit=0.2, p=1),
-            # albu.RandomCrop(512, 512, p=1),
-            # albu.GaussianBlur(p=0.5),
+            albu.HorizontalFlip(p=0.5),
+            albu.RandomScale(scale_limit=0.2, p=1),
+            albu.RandomCrop(512, 512, p=1),
+            albu.GaussianBlur(p=0.5),
             albu.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             albupt.ToTensorV2()
         ])
@@ -61,7 +61,6 @@ class CityScapes(data.Dataset):
     def transform_val(self, img, mask):
         # no random operation so that validation set always keeps the same
         composed_transform = albu.Compose([
-            # albu.Resize(512, 1024),
             albu.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             albupt.ToTensorV2()
         ])
