@@ -15,6 +15,7 @@ from utils.metric.segmentation_metric import build_evaluator
 from utils.saver import build_saver
 import torch
 from tqdm import tqdm
+import torch.nn as nn
 
 
 class Trainer:
@@ -25,8 +26,9 @@ class Trainer:
 
         # model
         self.model = build_Deeplab(config.backbone, config.output_stride, config.num_classes)
+        self.model = nn.DataParallel(self.model)
         if config.cuda:
-            self.model.to('cuda:1')
+            self.model.to('cuda:0')
 
         # train
         train_set = build_dataset(config.dataset, config.dataset_root, 'train')
@@ -34,10 +36,10 @@ class Trainer:
                                        num_workers=config.train_num_workers, shuffle=True, pin_memory=True)
         self.criterion = build_loss(mode=config.loss)(ignore_index=config.ignore_index)
         if config.cuda:
-            self.criterion.to('cuda:1')
+            self.criterion.to('cuda:0')
         self.optimizer = optim.SGD([
-            {'params': self.model.get_1x_lr_parameters(), 'lr': config.lr},
-            {'params': self.model.get_10x_lr_parameters(), 'lr': config.lr * 10}
+            {'params': self.model.module.get_1x_lr_parameters(), 'lr': config.lr},
+            {'params': self.model.module.get_10x_lr_parameters(), 'lr': config.lr * 10}
         ])
 
         # validate
@@ -104,7 +106,7 @@ class Trainer:
             iter = epoch * len(self.train_loader) + i
             image, target = sample[0], sample[1]
             if self.config.cuda:
-                image, target = image.to('cuda:1'), target.to('cuda:1')
+                image, target = image.to('cuda:0'), target.to('cuda:0')
             output = self.model(image)
             loss = self.criterion(output, target)
             total_train_loss += loss.item() * image.shape[0]
@@ -134,7 +136,7 @@ class Trainer:
         for i, sample in enumerate(tqdm(self.val_loader)):
             image, target = sample[0], sample[1]
             if self.config.cuda:
-                image, target = image.to('cuda:1'), target.to('cuda:1')
+                image, target = image.to('cuda:0'), target.to('cuda:0')
             with torch.no_grad():
                 output = self.model(image)
             # loss

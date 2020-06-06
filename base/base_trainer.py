@@ -35,13 +35,23 @@ class BaseTrainer:
             self.best_pred = checkpoint['pred']
         self.lr_scheduler = None # put it here because it need last_epoch=start_epoch-1 to compute current status
 
+    def train(self):
+        """
+        implement the logic of train:
+        -prepare mlflow
+        -log experiment parameters
+        -loop
+            -train_epoch
+            -val_epoch
+        """
+        raise NotImplementedError
 
     def train_epoch(self, epoch):
         """
         implement the logic of train epoch:
         -self.model.train()
         -loop over training samples
-        -log any metrics you want using the mlflow
+        -log any metrics you want using the mlflow/tensorboard
         """
         raise NotImplementedError
 
@@ -51,18 +61,7 @@ class BaseTrainer:
         -self.model.eval()
         -loop over validation samples
         -log any metrics you want using the mlflow
-        """
-        raise NotImplementedError
-
-    def train(self):
-        """
-        implement the logic of train:
-        -prepare mlflow
-        -log experiment parameters
-        -loop
-            -train_epoch
-            -val_epoch
-            -save model if performs better than best_pred on val
+        -save models if better than best_pred
         """
         raise NotImplementedError
 

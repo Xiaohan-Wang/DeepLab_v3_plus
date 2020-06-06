@@ -1,7 +1,7 @@
 class Config:
     # mlflow
     exp_name = 'workflow_test'
-    run_name = 'val_epoch()'
+    run_name = 'dataparallel'
 
     # output folder
     code_test_dir = '/home/home1/xw176/work/frameworks/DeepLab_v3+/test_output'  # delete after testing the code
@@ -18,8 +18,8 @@ class Config:
     output_stride = 16
 
     # train
-    train_batch_size = 2
-    train_num_workers = 0
+    train_batch_size = 16
+    train_num_workers = 4
     loss = 'Focal'
     lr_scheduler = 'WarmupCosine'
     lr = 3e-4
@@ -31,5 +31,5 @@ class Config:
     val_num_workers = 0
 
     # other
-    cuda = False
+    cuda = True
     resume = None
