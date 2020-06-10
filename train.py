@@ -33,7 +33,7 @@ class Trainer:
         # train
         train_set = build_dataset(config.dataset, config.dataset_root, 'train')
         self.train_loader = DataLoader(train_set, batch_size=config.train_batch_size,
-                                       num_workers=config.train_num_workers, shuffle=True, pin_memory=True)
+                                       num_workers=config.train_num_workers, shuffle=True, drop_last=True)
         self.criterion = build_loss(mode=config.loss)(ignore_index=config.ignore_index)
         if config.cuda:
             self.criterion.to('cuda:0')
@@ -45,7 +45,7 @@ class Trainer:
         # validate
         val_set = build_dataset(config.dataset, config.dataset_root, 'train')
         self.val_loader = DataLoader(val_set, batch_size=config.val_batch_size,
-                                     num_workers=config.val_num_workers, shuffle=False, pin_memory=True)
+                                     num_workers=config.val_num_workers, shuffle=False, drop_last=True)
         self.evaluator = build_evaluator(config.num_classes)
         self.best_pred = 0
 
@@ -145,7 +145,7 @@ class Trainer:
             total_val_loss += loss.item() * image.shape[0]
             # metrics
             pred = torch.argmax(output, dim=1)
-            self.evaluator.add_batch(target, pred)
+            self.evaluator.add_batch(target.cpu().numpy(), pred.cpu().numpy())
         self.writer.add_scalar('epoch_val_loss', total_val_loss / num_images, epoch)
         Acc = self.evaluator.get_Pixel_Accuracy()
         mAcc = self.evaluator.get_Mean_Pixel_Accuracy()

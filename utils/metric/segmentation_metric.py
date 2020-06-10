@@ -8,13 +8,13 @@ class SegmentationEvaluator():
         self.confusion_matrix = np.zeros((self.num_classes, self.num_classes))
 
     def reset(self):
-        self.confusion_matrix = np.zeros(self.num_classes, self.num_classes)
+        self.confusion_matrix = np.zeros((self.num_classes, self.num_classes))
 
     def add_batch(self, target, pred):
         mask = (target >= 0) & (target < self.num_classes)
         target = target[mask]
         pred = pred[mask]
-        batch_confusion_matrix = confusion_matrix(target, pred)
+        batch_confusion_matrix = confusion_matrix(target, pred, labels=list(range(self.num_classes)))
         self.confusion_matrix += batch_confusion_matrix
 
     def get_Pixel_Accuracy(self):
