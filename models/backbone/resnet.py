@@ -2,9 +2,9 @@ import torch.nn as nn
 import torch.nn.init as init
 from torch.hub import load_state_dict_from_url
 
-class BottleNeck(nn.Module):
+class Bottleneck(nn.Module):
     def __init__(self, in_channles, out_channels, stride, dilation):
-        super(BottleNeck, self).__init__()
+        super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(in_channles, out_channels[0], kernel_size=1, stride=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels[0])
         self.conv2 = nn.Conv2d(out_channels[0], out_channels[1], kernel_size=3, stride=stride,
@@ -124,9 +124,11 @@ class ResNet(nn.Module):
         model_dict.update(pretrained_dict)
         self.load_state_dict(model_dict)
 
+def build_ResNet50(output_stride, pretrained=True):
+    return ResNet(Bottleneck, [3, 4, 6, 3], output_stride, pretrained)
 
 def build_ResNet101(output_stride, pretrained=True):
-    return ResNet(BottleNeck, [3, 4, 23, 3], output_stride, pretrained)
+    return ResNet(Bottleneck, [3, 4, 23, 3], output_stride, pretrained)
 
 
 if __name__ == '__main__':
