@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class CrossEntropyLoss(nn.Module):
-    def __init__(self, ignore_index=255):
+    def __init__(self, ignore_index=-100):
         super(CrossEntropyLoss, self).__init__()
         self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='mean')
 
@@ -12,7 +12,7 @@ class CrossEntropyLoss(nn.Module):
 
 
 class WeightedCrossEntropyLoss(nn.Module):
-    def __init__(self, weight, ignore_index=255):
+    def __init__(self, weight, ignore_index=-100):
         super(WeightedCrossEntropyLoss, self).__init__()
         self.criterion = nn.CrossEntropyLoss(weight=weight, ignore_index=ignore_index, reduction='mean')
 
@@ -22,7 +22,7 @@ class WeightedCrossEntropyLoss(nn.Module):
 
 
 class FocalLoss(nn.Module):
-    def __init__(self, ignore_index=255):
+    def __init__(self, ignore_index=-100):
         super(FocalLoss, self).__init__()
         self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='none')
 
@@ -36,7 +36,7 @@ class FocalLoss(nn.Module):
 
 
 class WeightedFocalLoss(nn.Module):
-    def __init__(self, weight, ignore_index=255):
+    def __init__(self, weight, ignore_index=-100):
         super(WeightedFocalLoss, self).__init__()
         self.weight = weight
         self.criterion = nn.CrossEntropyLoss(ignore_index=ignore_index, reduction='none')

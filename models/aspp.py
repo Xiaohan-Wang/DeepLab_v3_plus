@@ -58,7 +58,7 @@ class _GlobalAvgPool(nn.Module):
 class ASPP(nn.Module):
     def __init__(self, backbone, output_stride):
         super(ASPP, self).__init__()
-        if backbone == 'resnet':
+        if backbone == 'resnet101' or backbone == 'resnet50':
             in_channel = 2048
         if output_stride == 16:
             dilations = [1, 6, 12, 18]

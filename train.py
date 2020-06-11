@@ -43,7 +43,7 @@ class Trainer:
         ])
 
         # validate
-        val_set = build_dataset(config.dataset, config.dataset_root, 'train')
+        val_set = build_dataset(config.dataset, config.dataset_root, 'val')
         self.val_loader = DataLoader(val_set, batch_size=config.val_batch_size,
                                      num_workers=config.val_num_workers, shuffle=False)
         self.evaluator = build_evaluator(config.num_classes)

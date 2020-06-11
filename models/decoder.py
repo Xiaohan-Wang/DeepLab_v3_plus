@@ -29,7 +29,7 @@ class ConvBlock(nn.Module):
 class Decoder(nn.Module):
     def __init__(self, backbone, num_classes):
         super(Decoder, self).__init__()
-        if backbone == 'resnet':
+        if backbone == 'resnet101' or backbone == 'resnet50':
             low_level_channels = 256
         else:
             raise NotImplementedError
