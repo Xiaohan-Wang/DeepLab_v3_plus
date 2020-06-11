@@ -156,7 +156,7 @@ class Trainer:
         self.log_metric('mIoU', mIoU, epoch)
         self.log_metric('fwIoU', fwIoU, epoch)
         print("epoch {}, image_num {}, val loss {:.2f}".format(epoch, num_images, total_val_loss / num_images))
-        print("Acc:{:.2f}\n mAcc:{:.2f}\n mIoU:{:.2f}\n fwIoU:{:.2f}".format(Acc, mAcc, mIoU, fwIoU))
+        print("Acc:{:.2f}\nmAcc:{:.2f}\nmIoU:{:.2f}\nfwIoU:{:.2f}".format(Acc*100, mAcc*100, mIoU*100, fwIoU*100))
         if mIoU > self.best_pred:
             self.best_pred = mIoU
             self.saver.save_state({

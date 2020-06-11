@@ -11,7 +11,7 @@ class Saver:
         # log best predictions
         best_pred = state_dict['pred']
         with open(os.path.join(self.model_dir, 'best_pred.txt'), 'a+') as f:
-            f.write("epoch {}: best pred {:.2f}".format(epoch, best_pred))
+            f.write("epoch {}: best pred {:.2f}".format(epoch, best_pred*100))
 
 
 def build_saver(model_dir):
