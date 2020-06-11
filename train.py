@@ -45,7 +45,7 @@ class Trainer:
         # validate
         val_set = build_dataset(config.dataset, config.dataset_root, 'train')
         self.val_loader = DataLoader(val_set, batch_size=config.val_batch_size,
-                                     num_workers=config.val_num_workers, shuffle=False, drop_last=True)
+                                     num_workers=config.val_num_workers, shuffle=False)
         self.evaluator = build_evaluator(config.num_classes)
         self.best_pred = 0
 
@@ -156,7 +156,7 @@ class Trainer:
         self.log_metric('mIoU', mIoU, epoch)
         self.log_metric('fwIoU', fwIoU, epoch)
         print("epoch {}, image_num {}, val loss {:.2f}".format(epoch, num_images, total_val_loss / num_images))
-        print("Acc:{:.2f}, mAcc:{:.2f}, mIoU:{:.2f}, fwIoU:{:.2f}".format(Acc, mAcc, mIoU, fwIoU))
+        print("Acc:{:.2f}\n mAcc:{:.2f}\n mIoU:{:.2f}\n fwIoU:{:.2f}".format(Acc, mAcc, mIoU, fwIoU))
         if mIoU > self.best_pred:
             self.best_pred = mIoU
             self.saver.save_state({
