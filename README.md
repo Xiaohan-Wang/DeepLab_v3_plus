@@ -6,4 +6,5 @@ This project is used to
 * decouple most modules so that they can be easily reused;
 * learn [MLflow](https://www.mlflow.org/docs/latest/index.html) to clearly track experiments parameters, results, etc.
 
-
+TODO list
+* [ ] Have a seperate template repo.
